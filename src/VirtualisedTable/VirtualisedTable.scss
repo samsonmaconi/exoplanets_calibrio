@@ -3,7 +3,7 @@ $custom_blue: #0077ff;
 
 .table-header {
   text-align: left;
-  border-bottom: 3px $custom_blue solid;
+  border-bottom: 3px darken($color: $custom_blue, $amount: 5%) solid;
   padding: 20px;
   font-weight: 600;
   color: rgb(0, 0, 0);
@@ -14,7 +14,7 @@ $custom_blue: #0077ff;
       color: $custom_blue;
     }
     &:active{
-      color: #489cfc;
+      color: lighten($color: $custom_blue, $amount: 10%);
     }
   }
 
@@ -56,5 +56,15 @@ $custom_blue: #0077ff;
   }
   & .highlighted {
     color: $custom_blue;
+  }
+
+  & .info-tooltip{
+    border-bottom: 1px black dotted;
+    padding-bottom: 2px;
+    color: darken($color: $custom_blue, $amount: 20%);
+    cursor: help;
+    &:hover{
+      color: lighten($color: $custom_blue, $amount: 10%);
+    }
   }
 }

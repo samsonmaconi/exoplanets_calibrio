@@ -18,7 +18,7 @@ const VirtualisedTable = ({ data, dataLoading, columns, sortCriteria, toggleSort
             }
             return primaryColumns
         }, [])
-        headers.push(<div key={headers.length} className="col"></div>)
+        headers.push(<div key={headers.length} className="col col-auto"><i class="fas fa-info-circle info-tooltip"></i></div>)
         return headers
     }
 
@@ -40,8 +40,8 @@ const VirtualisedTable = ({ data, dataLoading, columns, sortCriteria, toggleSort
                     </div>
                 )}
 
-                <div key={columnGroups.primaryColumns.length} className={`col data-column`}>
-                    {" "}
+                <div key={columnGroups.primaryColumns.length} className={`col col-auto data-column`}>
+                    {<i class="fas fa-info-circle info-tooltip"></i>}
                 </div>
             </div>
 
