@@ -3,9 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import SentryErrorBoundary from './SentryErrorBoundary'
 
 ReactDOM.render(
-    <App />,
+  <SentryErrorBoundary>
+    <App />
+  </SentryErrorBoundary>,
   document.getElementById('root')
 );
 
