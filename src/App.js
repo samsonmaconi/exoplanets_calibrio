@@ -5,19 +5,19 @@ import VirtualisedTable from './VirtualisedTable';
 
 function App() {
   const [exoplanetsData, setExoplanetsData] = useState({ data: [], isFetching: false })
-  const [sortCriteria, setSortCriteria] = useState({ columnId: 'pl_hostname', order: 'asc' })
+  const [sortCriteria, setSortCriteria] = useState({ columnId: 'pl_name', order: 'asc' })
   const EXOPLANETS_API = `https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?&table=exoplanets&format=json`
 
   const columns = [
     {
-      id: 'pl_hostname',
-      description: 'Host Star Name',
+      id: 'pl_name',
+      description: 'Planet Name',
       isSortable: true,
       isPrimaryInfo: true,
     },
     {
-      id: 'pl_name',
-      description: 'Planet Name',
+      id: 'pl_hostname',
+      description: 'Host Star Name',
       isSortable: true,
       isPrimaryInfo: true,
     },
@@ -77,12 +77,11 @@ function App() {
     const fetchExoplanetsData = async () => {
       try {
         setExoplanetsData(exoplanetsData => ({ ...exoplanetsData, isFetching: true }))
-        let response = await axios.get(`${EXOPLANETS_API}&order=${sortCriteria.columnId}${sortCriteria.order==='desc' ? '%20desc': ''}`)
+        let response = await axios.get(`${EXOPLANETS_API}&order=${sortCriteria.columnId}${sortCriteria.order === 'desc' ? '%20desc' : ''}`)
         let { data } = response
-        console.log('data--- :', data);
 
         // The API responds with a 200 status code even with errors
-        if(typeof data!=='object' && data.substr(0,5) === "ERROR"){
+        if (typeof data !== 'object' && data.substr(0, 5) === "ERROR") {
           throw new Error("Server Response Error")
         }
 
@@ -99,7 +98,7 @@ function App() {
   return (
     <div className="App">
       <div className="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <h4 className="my-0 mr-md-auto font-weight-normal">Exoplanets Explorer <i class="fas fa-rocket"></i></h4>
+        <h4 className="my-0 mr-md-auto font-weight-normal">Exoplanets Explorer <i className="fas fa-rocket"></i></h4>
       </div>
       <VirtualisedTable
         columns={columns}

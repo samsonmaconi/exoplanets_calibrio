@@ -1,6 +1,14 @@
 $table_left_right_padding: 35px;
 $custom_blue: #0077ff;
 
+.VirtualisedTable {
+  height: 60vh;
+}
+
+.popover{
+  max-width: 50vw;
+}
+
 .table-header {
   text-align: left;
   border-bottom: 3px darken($color: $custom_blue, $amount: 5%) solid;
@@ -37,15 +45,16 @@ $custom_blue: #0077ff;
   }
 }
 .table-body {
-  min-height: 50vh;
-  max-height: 100vh;
+  height: 100%;
   text-align: left;
 
   & .data-row{
     padding-top: 10px;
     padding-bottom: 10px;
-    &:nth-child(odd){
-      background: rgb(238, 238, 238);
+    & .col{
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
     & .col:nth-child(1){
       padding-left: $table_left_right_padding;
@@ -66,5 +75,8 @@ $custom_blue: #0077ff;
     &:hover{
       color: lighten($color: $custom_blue, $amount: 10%);
     }
+  }
+  & .content {
+    height: 100%;
   }
 }
