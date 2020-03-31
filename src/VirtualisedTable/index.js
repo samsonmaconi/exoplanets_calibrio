@@ -1,8 +1,26 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import './VirtualisedTable.scss';
 import Loader from '../Loader';
+import { FixedSizeList as List } from "react-window"
+import AutoSizer from "react-virtualized-auto-sizer"
+import { Popover, OverlayTrigger } from 'react-bootstrap';
 
 const VirtualisedTable = ({ data, dataLoading, columns, sortCriteria, toggleSortCriteria }) => {
+
+    const [columnGroups, setColumnGroups] = useState({ primaryColumns: [], secondaryColumns: [] })
+    const TABLE_HEAD_BODY_ALIGNMENT_VARIANCE = 14 //14px used by react-window's FixedSizeList scrollbar and margin
+    const MIN_ROW_HEIGHT = 44
+
+    const moreInfoPopover = (dataIndex) => (
+        <Popover id="moreInfoPopover">
+            <Popover.Title as="h3">{`More about ${data[dataIndex][columnGroups.primaryColumns[0]]}`}</Popover.Title>
+            <Popover.Content>
+                {columnGroups.secondaryColumns.map(([secondaryColumnId, secondaryColumnDescription], i) =>
+                    <span key={i}><strong>{`${secondaryColumnDescription}: `}</strong><span>{data[dataIndex][secondaryColumnId] || 'n/a'}</span><br /></span>
+                )}
+            </Popover.Content>
+        </Popover>
+    )
 
     const TableHeader = () => {
         let headers = columns.reduce((primaryColumns, column, i) => {
@@ -18,49 +36,73 @@ const VirtualisedTable = ({ data, dataLoading, columns, sortCriteria, toggleSort
             }
             return primaryColumns
         }, [])
-        headers.push(<div key={headers.length} className="col col-auto"><i class="fas fa-info-circle info-tooltip"></i></div>)
+        headers.push(<div key={headers.length} className="col col-auto"><i className="fas fa-info-circle info-tooltip"></i></div>)
         return headers
     }
 
-    const TableBody = () => {
-        let columnGroups = columns.reduce((columnGroups, column, i) => {
-            if (column.isPrimaryInfo) {
-                columnGroups.primaryColumns.push(column.id)
-            } else {
-                columnGroups.secondaryColumns.push(column.id)
-            }
-            return columnGroups
-        }, { primaryColumns: [], secondaryColumns: [] })
+    useEffect(() => {
+        const prepColumnGroups = () => {
+            let _columnGroups = columns.reduce((_columnGroups, column) => {
+                if (column.isPrimaryInfo) {
+                    _columnGroups.primaryColumns.push(column.id)
+                } else {
+                    _columnGroups.secondaryColumns.push([column.id, column.description])
+                }
+                return _columnGroups
+            }, { primaryColumns: [], secondaryColumns: [] })
 
-        let tableRows = data.map((data, i) =>
-            <div key={i} className={`row data-row`}>
-                {columnGroups.primaryColumns.map((primaryColumnId, i) =>
-                    <div key={i} className={`col data-column ${primaryColumnId===sortCriteria.columnId? 'highlighted': ''}`}>
-                        {data[primaryColumnId] || '-'}
-                    </div>
-                )}
+            setColumnGroups(_columnGroups)
+        }
+        prepColumnGroups();
+    }, [columns]);
 
-                <div key={columnGroups.primaryColumns.length} className={`col col-auto data-column`}>
-                    {<i class="fas fa-info-circle info-tooltip"></i>}
+
+    const TableBodyRows = ({ index, style }) => {
+        return (<div className={`row data-row`} style={{ ...style, background: index % 2 ? '#eeeeee' : '' }}>
+            {columnGroups.primaryColumns.map((primaryColumnId, key) =>
+                <div key={key} className={`col data-column ${primaryColumnId === sortCriteria.columnId ? 'highlighted' : ''}`}>
+                    {data[index][primaryColumnId] || 'n/a'}
                 </div>
+            )}
+            <div key={columnGroups.primaryColumns.length} className={`col col-auto data-column`}>
+                <OverlayTrigger trigger={['hover', 'focus']} data-index={index} placement="left" overlay={moreInfoPopover(index)}>
+                    <i className="fas fa-info-circle info-tooltip" />
+                </OverlayTrigger>
             </div>
-
-        )
-
-        return tableRows
+        </div>)
     }
+
 
     return (
         <div className="VirtualisedTable container-fluid px-5 mt-5">
-            <div className="table-header row">
-                <TableHeader />
-            </div>
             <Loader loading={dataLoading} />
-            <div className="table-body row">
-                <div className="col">
-                    <div className="content"><TableBody /></div>
-                </div>
-            </div>
+            <AutoSizer>
+                {({ height, width }) => {
+                    return (
+                        <div>
+                            <div className="table-header row" style={{ width: `${width - TABLE_HEAD_BODY_ALIGNMENT_VARIANCE}px` }}>
+                                <TableHeader />
+                            </div>
+
+                            <div className="table-body row">
+                                <div className="col">
+                                    <div className="content">
+                                        <List
+                                            className="List"
+                                            height={height}
+                                            itemCount={data.length}
+                                            itemSize={MIN_ROW_HEIGHT}
+                                            width={width}
+                                        >
+                                            {TableBodyRows}
+                                        </List>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }}
+            </AutoSizer>
         </div>
     );
 }
