@@ -1,0 +1,7 @@
+version: '3'
+services:
+  web_client:
+    # build: .
+    image: samsonmaconi/calabrio_exoplanets_explorer
+    ports:
+     - "3000:3000"
