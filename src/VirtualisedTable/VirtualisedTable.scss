@@ -1,0 +1,60 @@
+$table_left_right_padding: 35px;
+$custom_blue: #0077ff;
+
+.table-header {
+  text-align: left;
+  border-bottom: 3px $custom_blue solid;
+  padding: 20px;
+  font-weight: 600;
+  color: rgb(0, 0, 0);
+
+  & .sortableColumn {
+    cursor: pointer;
+    &:hover{
+      color: $custom_blue;
+    }
+    &:active{
+      color: #489cfc;
+    }
+  }
+
+  & .selected {
+    color: $custom_blue;
+    & .sortingIcon {
+      font-family: 'Font Awesome 5 Free';
+      display: inline-block;
+      padding-left: 5px;
+      padding-right: 5px;
+      vertical-align: auto;
+      font-weight: 900;
+      &.asc::after {
+        content: '\f161';
+      }
+      &.desc::after {
+        content: '\f160';
+      }
+    }
+  }
+}
+.table-body {
+  min-height: 50vh;
+  max-height: 100vh;
+  text-align: left;
+
+  & .data-row{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    &:nth-child(odd){
+      background: rgb(238, 238, 238);
+    }
+    & .col:nth-child(1){
+      padding-left: $table_left_right_padding;
+    }
+    & .col:last-child{
+      padding-right: $table_left_right_padding;
+    }
+  }
+  & .highlighted {
+    color: $custom_blue;
+  }
+}
